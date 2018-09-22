@@ -1,0 +1,13 @@
+{
+	"extends": "./node_modules/@dojo/scripts/intern/base.json",
+	"capabilities+": {
+		"name": "@dojo/cli-build-lib"
+	},
+	"suites": [
+		"./dist/dev/tests/unit/all.js",
+		"./dist/dev/tests/functional/all.js"
+	],
+	"coverage": [
+		"./dist/dev/src/**/*.js"
+	]
+}
