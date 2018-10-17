@@ -1,6 +1,7 @@
 const { describe, it, beforeEach, afterEach } = intern.getInterface('bdd');
 const { assert } = intern.getPlugin('chai');
 import * as path from 'path';
+import { SinonStub, stub } from 'sinon';
 
 import MockModule from '../support/MockModule';
 
@@ -60,6 +61,15 @@ describe('util', () => {
 	});
 
 	describe('ejected build helper', () => {
+		let consoleStub: SinonStub | null;
+
+		afterEach(() => {
+			if (consoleStub) {
+				consoleStub.restore();
+				consoleStub = null;
+			}
+		});
+
 		it('should generate a shell script for building ejected libraries', () => {
 			const { createAndLinkEjectedBuildFile } = mockModule.getModuleUnderTest();
 			const content = 'console.log(42)';
@@ -78,6 +88,21 @@ describe('util', () => {
 					path.join(process.cwd(), './dojo-build-lib')
 				)
 			);
+		});
+
+		it('should log errors to the console', () => {
+			const { createAndLinkEjectedBuildFile } = mockModule.getModuleUnderTest();
+			const content = 'console.log(42)';
+			const outputDir = path.join(process.cwd(), 'config', 'build-lib');
+			const fs = mockModule.getMock('fs');
+			const error = new Error('bad symlink');
+
+			consoleStub = stub(console, 'error');
+			fs.readFileSync.returns(content);
+			fs.symlinkSync.throws(error);
+			createAndLinkEjectedBuildFile(outputDir);
+
+			assert.isTrue(consoleStub.calledWith(error.message));
 		});
 	});
 });

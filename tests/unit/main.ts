@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import MockModule from '../support/MockModule';
 
 let mockModule: MockModule;
+let mockStats: any;
 let consoleStub = stub(console, 'log');
 
 function getMockConfiguration(config: any = {}) {
@@ -22,11 +23,12 @@ describe('command', () => {
 	beforeEach(() => {
 		mockModule = new MockModule('../../src/main', require);
 		mockModule.dependencies(['./build', './logger']);
+		mockStats = {
+			path: 'path/to/output',
+			assets: []
+		};
 		mockModule.getMock('./build').default.callsFake((args: any, callback: Function) => {
-			callback(null, {
-				path: 'path/to/output',
-				assets: []
-			});
+			callback(null, mockStats);
 			return Promise.resolve();
 		});
 	});
@@ -63,6 +65,38 @@ describe('command', () => {
 		const main = mockModule.getModuleUnderTest().default;
 		return main.run(getMockConfiguration(), args).then(() => {
 			assert.isTrue(mockModule.getMock('./build').default.calledWith(args));
+		});
+	});
+
+	it('should reject on error', () => {
+		const main = mockModule.getModuleUnderTest().default;
+		const thrown = new Error('error');
+		mockModule.getMock('./build').default.callsFake((args: any, callback: Function) => {
+			callback(thrown);
+		});
+		return main.run(getMockConfiguration(), {}).then(
+			() => {
+				throw new Error('should not resolve');
+			},
+			(error: Error) => {
+				assert.strictEqual(error, thrown);
+			}
+		);
+	});
+
+	it('should display a wait message when serving', () => {
+		const args = { mode: 'dev', serve: true, port: 3333 };
+		const main = mockModule.getModuleUnderTest().default;
+		return main.run(getMockConfiguration(), args).then(() => {
+			assert.isTrue(mockModule.getMock('./logger').default.calledWith(mockStats, 'Listening on port 3333...'));
+		});
+	});
+
+	it('should display a wait message when watching', () => {
+		const args = { mode: 'dev', watch: true };
+		const main = mockModule.getModuleUnderTest().default;
+		return main.run(getMockConfiguration(), args).then(() => {
+			assert.isTrue(mockModule.getMock('./logger').default.calledWith(mockStats, 'watching...'));
 		});
 	});
 
