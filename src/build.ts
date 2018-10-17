@@ -15,7 +15,7 @@ const postcssImport = require('postcss-import');
 const postcssModules = require('postcss-modules');
 const postcssPresetEnv = require('postcss-preset-env');
 
-const assetExtensions = ['gif', 'png', 'jpg', 'jpeg', 'svg', 'eot', 'ttf', 'woff', 'woff2'];
+const assetExtensions = ['html', 'gif', 'png', 'jpg', 'jpeg', 'svg', 'eot', 'ttf', 'woff', 'woff2'];
 const allExtensions = [...assetExtensions, 'css', 'ts'];
 const basePath = process.cwd();
 const srcPath = path.join(basePath, 'src');

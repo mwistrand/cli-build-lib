@@ -175,7 +175,7 @@ describe('build', () => {
 
 	it('should copy assets', () => {
 		const buildLibrary = mockModule.getModuleUnderTest().default;
-		const assetExtensions = 'gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2';
+		const assetExtensions = 'html,gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2';
 		const assetFiles = join(process.cwd(), `src/**/*.{${assetExtensions}}`);
 		return buildLibrary({}).then(() => {
 			const outputPath = join(process.cwd(), 'output/dist');
@@ -185,7 +185,7 @@ describe('build', () => {
 
 	it('should copy assets to output/test/src/ with --mode=test', () => {
 		const buildLibrary = mockModule.getModuleUnderTest().default;
-		const assetExtensions = 'gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2';
+		const assetExtensions = 'html,gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2';
 		const assetFiles = join(process.cwd(), `{src,tests}/**/*.{${assetExtensions}}`);
 		return buildLibrary({ mode: 'test' }).then(() => {
 			const outputPath = join(process.cwd(), 'output/test');
@@ -349,7 +349,7 @@ describe('build', () => {
 		it('should observe only TypeScript, CSS, image, and font assets', () => {
 			const buildLibrary = mockModule.getModuleUnderTest().default;
 			return buildLibrary({ watch: true }).then(() => {
-				const extensions = 'gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2,css,ts';
+				const extensions = 'html,gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2,css,ts';
 				const glob = join(process.cwd(), `src/**/*.{${extensions}}`);
 				assert.isTrue(mockModule.getMock('chokidar').watch.calledWith(glob));
 			});
@@ -358,7 +358,7 @@ describe('build', () => {
 		it('should observe src/ and tests/ files in test mode', () => {
 			const buildLibrary = mockModule.getModuleUnderTest().default;
 			return buildLibrary({ mode: 'test', watch: true }).then(() => {
-				const extensions = 'gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2,css,ts';
+				const extensions = 'html,gif,png,jpg,jpeg,svg,eot,ttf,woff,woff2,css,ts';
 				const glob = join(process.cwd(), `{src,tests}/**/*.{${extensions}}`);
 				assert.isTrue(mockModule.getMock('chokidar').watch.calledWith(glob));
 			});
